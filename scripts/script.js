@@ -93,8 +93,6 @@ function changeTheme() {
   }
 }
 
-//(1+20) - ((3*4)/3)
-//1+20-3*4/3
 function calculate(input) {
   console.log(input)
   let copyInput = input.split('')
@@ -103,39 +101,49 @@ function calculate(input) {
   const sum = "+";
   const deduct = "-"; 
   const division = "/";
-  //
   
-  while(isValidInput(copyInput, operator) ){
+  try{
+    while(isValidInput(copyInput, operator) ){
+        
+      let limits = {
+        begin: 0,
+        end: 0
+      }
       
-    let limits = {
-       begin: 0,
-       end: 0
+      if(copyInput.includes(division)){
+        let resultdivision = resultOperator(copyInput, division, divide, limits);
+        copyInput.splice(limits.begin, limits.end+1, resultdivision);
+  
+      }else if(copyInput.includes(mult)){
+        let resultmult = resultOperator(copyInput, mult, multiply, limits);
+        copyInput.splice(limits.begin, limits.end+1, resultmult);
+        
+      }else if(copyInput.includes(deduct)){
+      let resultdeduct = resultOperator(copyInput, deduct, subtract, limits);
+      copyInput.splice(limits.begin, limits.end+1, resultdeduct);
+  
+      }else if(copyInput.includes(sum)){
+        let resultsun = resultOperator(copyInput, sum, add, limits);
+        copyInput.splice(limits.begin, limits.end+1, resultsun);
+  
+      }
     }
-
-    if(copyInput.includes(division)){
-      let resultdivision = resultOperator(copyInput, division, divide, limits);
-      copyInput.splice(limits.begin, limits.end+1, resultdivision);
-
-    }else if(copyInput.includes(mult)){
-      let resultmult = resultOperator(copyInput, mult, multiply, limits);
-      copyInput.splice(limits.begin, limits.end+1, resultmult);
-      
-    }else if(copyInput.includes(deduct)){
-    let resultdeduct = resultOperator(copyInput, deduct, subtract, limits);
-    copyInput.splice(limits.begin, limits.end+1, resultdeduct);
-
-    }else if(copyInput.includes(sum)){
-      let resultsun = resultOperator(copyInput, sum, add, limits);
-      copyInput.splice(limits.begin, limits.end+1, resultsun);
-
-    }
+  }catch(erro){
+    return erro.message
   }
+
   return copyInput
 }
 
+//validação para input
 function isValidInput(copyInput, operator){
-  for(let i = 1; i < copyInput.length ; i++){
+  let filteredInput = copyInput.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
   
+  if(isNaN(filteredInput.length === 0)){
+    throw new Error("Input inválido")
+  }
+  
+   for(let i = 1; i < copyInput.length ; i++){
     if(operator.includes(copyInput[i])){
       return true
     }
@@ -168,10 +176,12 @@ const divide = (num1, num2) =>{
   return (num1 / num2);
 }
 
+//encontra indice operador
 function indexOfOperator(input, operator){
  return input.indexOf(operator)
 }
 
+//retorna em indice único numero antes o positionIndexOperator
 function getNumberBefore(copyInput, positionIndexOperator, limits){
   let operatorMath = "-+*/"
   let numero = [];
@@ -186,9 +196,16 @@ function getNumberBefore(copyInput, positionIndexOperator, limits){
   return Number(numero)
 }
 
+//retorna em indice único números( e operadores ) após o positionIndexOperator
 function getNumberAfter(copyInput, positionIndexOperator, limits){
   let operatorMath = "-+*/"
   let numero = [];
+  
+  if(operatorMath.includes(copyInput[positionIndexOperator + 1])){//retira proximo operador positionIndexOperator do copyInput e armazena em numero
+    numero.push(copyInput[positionIndexOperator + 1 ])
+    copyInput.splice(positionIndexOperator + 1, 1)
+  }
+
   for(let i = positionIndexOperator +1; i < copyInput.length ; i++){
       if(operatorMath.includes(copyInput[i])){
           break;

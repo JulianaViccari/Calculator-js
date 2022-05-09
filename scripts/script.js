@@ -139,11 +139,11 @@ function calculate(input) {
 function isValidInput(copyInput, operator){
   let filteredInput = copyInput.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
   
-  if(isNaN(filteredInput.length === 0)){
+  if(filteredInput.length === 0){
     throw new Error("Input inválido")
   }
   
-   for(let i = 1; i < copyInput.length ; i++){
+   for(let i = 0; i < copyInput.length ; i++){
     if(operator.includes(copyInput[i])){
       return true
     }
@@ -187,13 +187,18 @@ function getNumberBefore(copyInput, positionIndexOperator, limits){
   let numero = [];
   for(let i = positionIndexOperator -1; i >= 0; i--){
     if(operatorMath.includes(copyInput[i])){
-      break;
+      if(i === 0 ){
+        numero.unshift(copyInput[i]);
+        copyInput.splice(copyInput[i], 0)
+      }else{
+        break;
+      }
     }else{
-      numero = copyInput[i] + numero;
+      numero.unshift(copyInput[i]);
       limits.begin = i;
     } 
   }
-  return Number(numero)
+  return Number(numero.join(''))
 }
 
 //retorna em indice único números( e operadores ) após o positionIndexOperator

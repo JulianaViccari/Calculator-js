@@ -105,7 +105,7 @@ function calculate(input) {
   const division = "/";
   //
   
-  while(compareString(copyInput, operator) ){
+  while(isValidInput(copyInput, operator) ){
       
     let limits = {
        begin: 0,
@@ -133,8 +133,9 @@ function calculate(input) {
   return copyInput
 }
 
-function compareString(copyInput, operator){
-  for(let i = 0; i < copyInput.length ; i++){
+function isValidInput(copyInput, operator){
+  for(let i = 1; i < copyInput.length ; i++){
+  
     if(operator.includes(copyInput[i])){
       return true
     }

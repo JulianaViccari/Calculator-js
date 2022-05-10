@@ -1,0 +1,23 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "A Calculator App with dark mode. Built using HTML, CSS and JavaScript. Feel free to check out the code and don't forget to star the repo.⭐",
+  "main": "playground.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianaViccari/calculator-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JulianaViccari/calculator-js/issues"
+  },
+  "homepage": "https://github.com/JulianaViccari/calculator-js#readme",
+  "devDependencies": {
+    "cypress": "^9.6.1"
+  }
+}

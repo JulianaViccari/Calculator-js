@@ -189,7 +189,7 @@ function getNumberBefore(copyInput, positionIndexOperator, limits){
     if(operatorMath.includes(copyInput[i])){
       if(i === 0 ){
         numero.unshift(copyInput[i]);
-        copyInput.splice(copyInput[i], 0)
+        limits.begin = i;
       }else{
         break;
       }

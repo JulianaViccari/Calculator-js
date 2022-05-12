@@ -185,8 +185,13 @@ function indexOfOperator(input, operator){
 function getNumberBefore(copyInput, positionIndexOperator, limits){
   let operatorMath = "-+*/"
   let numero = [];
+  //if abaixo merece atenção
+  if(copyInput[positionIndexOperator - 1] === '*' || copyInput[positionIndexOperator - 1] === '/'){
+    throw new Error("Expressão mal formada")
+  }
+
   for(let i = positionIndexOperator -1; i >= 0; i--){
-    if(operatorMath.includes(copyInput[i])){
+    if(operatorMath.includes(copyInput[i])){ 
       if(i === 0 ){
         numero.unshift(copyInput[i]);
         limits.begin = i;
@@ -211,7 +216,7 @@ function getNumberAfter(copyInput, positionIndexOperator, limits){
     copyInput.splice(positionIndexOperator + 1, 1)
   }
 
-  for(let i = positionIndexOperator +1; i < copyInput.length ; i++){
+  for(let i = positionIndexOperator +1; i < copyInput.length ; i++){ 
       if(operatorMath.includes(copyInput[i])){
           break;
       }else{

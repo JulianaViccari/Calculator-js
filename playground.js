@@ -1,9 +1,147 @@
 
-let arr = ['-', 5, '+', 10, '/' ];
+//Testando codigo com regex
 
-let arr1 = arr.sort();
+function calculate(input) {
+    console.log(input)
+    let copyInput = input.split(/([\+\-]\d{1,}|[\+\-\*\/])/)
+    const mult= "*";
+    const sum = "+";
+    const deduct = "-"; 
+    const division = "/";
 
-console.log(arr1)
+    try{
+        while(copyInput !== 1 ){
+            
+        let limits = {
+            begin: 0,
+            end: 0
+        }
+        
+        if(copyInput.includes(division)){
+            let resultdivision = resultOperator(copyInput, division, divide);
+            //copyInput.splice(limits.begin, limits.end+1, resultdivision);
+            resultdivision;
 
--2*5+2
-//"test": "echo \"Error: no test specified\" && exit 1"
+        }else if(copyInput.includes(mult)){
+            let resultmult = resultOperator(copyInput, mult, multiply);
+            //copyInput.splice(limits.begin, limits.end+1, resultmult);
+            resultmult
+            
+        }else if(copyInput.includes(deduct)){
+            let resultdeduct = resultOperator(copyInput, deduct, subtract);
+            //copyInput.splice(limits.begin, limits.end+1, resultdeduct);
+            resultdeduct;
+
+        }else if(copyInput.includes(sum)){
+            let resultsun = resultOperator(copyInput, sum, add);
+            resultsun;
+
+        }else{
+            let result =copyInput.reduce((acc, curr) => Number(acc)+Number(curr));
+            result;
+            continue;
+        }
+        }
+    }catch(erro){
+        return erro.message
+    }
+
+    return copyInput
+}
+  
+function resultOperator(copyInput, compareOperador, mathOperationFunction){
+    let total = 0
+
+    let indexOperator = indexOfOperator(copyInput, compareOperador);
+    let numberBefore = Number(copyInput[indexOperator+1]);
+    let numberAfter = Number(copyInput[indexOperator-1]);;
+    total += mathOperationFunction(numberBefore, numberAfter );
+    return copyInput.splice(copyInput[indexOperator-1], copyInput[indexOperator+1], total);
+}
+  
+  //validação para input
+function isValidInput(copyInput, operator){
+    let filteredInput = copyInput.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
+
+    if(filteredInput.length === 0){
+        throw new Error("Input inválido")
+    }
+
+        for(let i = 0; i < copyInput.length ; i++){
+        if(operator.includes(copyInput[i])){
+        return true
+        }
+    }
+}
+  
+  
+  
+const add = (num1, num2)=>{
+    return (num1 + num2);
+}
+
+const subtract = (num1, num2) => {
+    return (num1 - num2);
+}
+
+const multiply= (num1, num2)=>{
+    return (num1 * num2);
+}
+
+const divide = (num1, num2) =>{
+    return (num1 / num2);
+}
+
+//encontra indice operador
+function indexOfOperator(input, operator){
+    return input.indexOf(operator)
+}
+  
+//retorna em indice único numero antes o positionIndexOperator
+function getNumberBefore(copyInput, positionIndexOperator, limits){
+let operatorMath = "-+*/"
+let numero = [];
+//if abaixo merece atenção
+    if(copyInput[positionIndexOperator - 1] === '*' || copyInput[positionIndexOperator - 1] === '/'){
+            throw new Error("expressão mal informada")
+        }
+
+    for(let i = positionIndexOperator -1; i >= 0; i--){
+        if(operatorMath.includes(copyInput[i])){ 
+        if(i === 0 ){
+            numero.unshift(copyInput[i]);
+            limits.begin = i;
+        }else{
+            break;
+        }
+        }else{
+        numero.unshift(copyInput[i]);
+        limits.begin = i;
+        } 
+    }
+return Number(numero.join(''))
+}
+  
+//retorna em indice único números( e operadores ) após o positionIndexOperator
+function getNumberAfter(copyInput, positionIndexOperator, limits){
+    let operatorMath = "-+*/"
+    let numero = [];
+    
+    if(operatorMath.includes(copyInput[positionIndexOperator + 1])){//retira proximo operador positionIndexOperator do copyInput e armazena em numero
+    numero.push(copyInput[positionIndexOperator + 1 ])
+    copyInput.splice(positionIndexOperator + 1, 1)
+    }
+
+    for(let i = positionIndexOperator +1; i < copyInput.length ; i++){ 
+        if(operatorMath.includes(copyInput[i])){
+            break;
+        }else{
+            numero.push(copyInput[i]);
+            limits.end = i;
+        } 
+    }
+    return Number(numero.join(''));
+}
+
+calculate('12-10')
+

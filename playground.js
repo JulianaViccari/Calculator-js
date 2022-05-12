@@ -13,24 +13,16 @@ function calculate(input) {
     try{
         while(isValidInput(copyInput, operator) ){
             
-        let limits = {
-            begin: 0,
-            end: 0
-        }
-        
         if(copyInput.includes(division)){
             let resultdivision = resultOperator(copyInput, division, divide);
-            //copyInput.splice(limits.begin, limits.end+1, resultdivision);
             resultdivision;
 
         }else if(copyInput.includes(mult)){
             let resultmult = resultOperator(copyInput, mult, multiply);
-            //copyInput.splice(limits.begin, limits.end+1, resultmult);
             resultmult
             
         }else if(copyInput.includes(deduct)){
             let resultdeduct = resultOperator(copyInput, deduct, subtract);
-            //copyInput.splice(limits.begin, limits.end+1, resultdeduct);
             resultdeduct;
 
         }else if(copyInput.includes(sum)){
@@ -52,12 +44,15 @@ function calculate(input) {
   
 function resultOperator(copyInput, compareOperador, mathOperationFunction){
     let total = 0
+    let limits = {begin: 0 ,end: 0};
 
     let indexOperator = indexOfOperator(copyInput, compareOperador);
-    let numberBefore = Number(copyInput[indexOperator+1]);
-    let numberAfter = Number(copyInput[indexOperator-1]);;
+    let numberBefore = Number(copyInput[indexOperator-1]);
+    limits.begin = indexOperator-1;
+    let numberAfter = Number(copyInput[indexOperator+1]);
+    limits.end = indexOperator+1;
     total += mathOperationFunction(numberBefore, numberAfter );
-    return copyInput.splice(copyInput[indexOperator-1], copyInput[indexOperator+1], total);
+    return copyInput.splice(limits.begin, limits.end+1, total);
 }
   
   //validação para input
@@ -74,9 +69,7 @@ function isValidInput(copyInput, operator){
         }
     }
 }
-  
-  
-  
+   
 const add = (num1, num2)=>{
     return (num1 + num2);
 }
@@ -97,10 +90,18 @@ const divide = (num1, num2) =>{
 function indexOfOperator(input, operator){
     return input.indexOf(operator)
 }
-  
+
+console.log(calculate('12*1'))
+
+
+
+
+
+
+/*
 //retorna em indice único numero antes o positionIndexOperator
 function getNumberBefore(copyInput, positionIndexOperator, limits){
-let operatorMath = "-+*/"
+let operatorMath = "-+/*"
 let numero = [];
 //if abaixo merece atenção
     if(copyInput[positionIndexOperator - 1] === '*' || copyInput[positionIndexOperator - 1] === '/'){
@@ -125,7 +126,7 @@ return Number(numero.join(''))
   
 //retorna em indice único números( e operadores ) após o positionIndexOperator
 function getNumberAfter(copyInput, positionIndexOperator, limits){
-    let operatorMath = "-+*/"
+    let operatorMath = "-+/*"
     let numero = [];
     
     if(operatorMath.includes(copyInput[positionIndexOperator + 1])){//retira proximo operador positionIndexOperator do copyInput e armazena em numero
@@ -143,6 +144,7 @@ function getNumberAfter(copyInput, positionIndexOperator, limits){
     }
     return Number(numero.join(''));
 }
+*/
 
-calculate('12-10')
+
 

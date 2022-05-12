@@ -173,7 +173,11 @@ const multiply= (num1, num2)=>{
 }
 
 const divide = (num1, num2) =>{
+  if(num2 === 0){
+    throw new Error("Não é possivel divisão por 0")
+  }else{
   return (num1 / num2);
+  }
 }
 
 //encontra indice operador

@@ -3,14 +3,15 @@
 
 function calculate(input) {
     console.log(input)
-    let copyInput = input.split(/([\+\-]\d{1,}|[\+\-\*\/])/)
+    let copyInput = input.split(/([\+\-]\d{1,}|[\+\-\*\/])/);
+    const operator = "-+*/";
     const mult= "*";
     const sum = "+";
     const deduct = "-"; 
     const division = "/";
 
     try{
-        while(copyInput !== 1 ){
+        while(isValidInput(copyInput, operator) ){
             
         let limits = {
             begin: 0,

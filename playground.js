@@ -10,6 +10,10 @@ function calculate(input) {
     const deduct = "-"; 
     const division = "/";
 
+    copyInput = copyInput.filter((element)=>{
+        return element != ''
+    } )
+
     try{
         while(isValidInput(copyInput, operator) ){
             
@@ -28,17 +32,17 @@ function calculate(input) {
         }else if(copyInput.includes(sum)){
             let resultsun = resultOperator(copyInput, sum, add);
             resultsun;
-
         }else{
-            let result =copyInput.reduce((acc, curr) => Number(acc)+Number(curr));
-            result;
-            continue;
+        let result = copyInput.reduce((acc, curr) => Number(acc)+Number(curr));
+        copyInput = result;
+        return copyInput
         }
         }
     }catch(erro){
         return erro.message
     }
 
+    
     return copyInput
 }
   
@@ -55,7 +59,7 @@ function resultOperator(copyInput, compareOperador, mathOperationFunction){
     return copyInput.splice(limits.begin, limits.end+1, total);
 }
   
-  //validação para input
+//validação para input
 function isValidInput(copyInput, operator){
     let filteredInput = copyInput.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
 
@@ -63,11 +67,12 @@ function isValidInput(copyInput, operator){
         throw new Error("Input inválido")
     }
 
-        for(let i = 0; i < copyInput.length ; i++){
-        if(operator.includes(copyInput[i])){
-        return true
+    for(let i = 0; i < copyInput.length ; i++){
+        if(operator.includes(copyInput[i]) || copyInput.length !== 1){
+          return true
         }
     }
+    
 }
    
 const add = (num1, num2)=>{
@@ -91,60 +96,7 @@ function indexOfOperator(input, operator){
     return input.indexOf(operator)
 }
 
-console.log(calculate('12*1'))
-
-
-
-
-
-
-/*
-//retorna em indice único numero antes o positionIndexOperator
-function getNumberBefore(copyInput, positionIndexOperator, limits){
-let operatorMath = "-+/*"
-let numero = [];
-//if abaixo merece atenção
-    if(copyInput[positionIndexOperator - 1] === '*' || copyInput[positionIndexOperator - 1] === '/'){
-            throw new Error("expressão mal informada")
-        }
-
-    for(let i = positionIndexOperator -1; i >= 0; i--){
-        if(operatorMath.includes(copyInput[i])){ 
-        if(i === 0 ){
-            numero.unshift(copyInput[i]);
-            limits.begin = i;
-        }else{
-            break;
-        }
-        }else{
-        numero.unshift(copyInput[i]);
-        limits.begin = i;
-        } 
-    }
-return Number(numero.join(''))
-}
-  
-//retorna em indice único números( e operadores ) após o positionIndexOperator
-function getNumberAfter(copyInput, positionIndexOperator, limits){
-    let operatorMath = "-+/*"
-    let numero = [];
-    
-    if(operatorMath.includes(copyInput[positionIndexOperator + 1])){//retira proximo operador positionIndexOperator do copyInput e armazena em numero
-    numero.push(copyInput[positionIndexOperator + 1 ])
-    copyInput.splice(positionIndexOperator + 1, 1)
-    }
-
-    for(let i = positionIndexOperator +1; i < copyInput.length ; i++){ 
-        if(operatorMath.includes(copyInput[i])){
-            break;
-        }else{
-            numero.push(copyInput[i]);
-            limits.end = i;
-        } 
-    }
-    return Number(numero.join(''));
-}
-*/
+calculate('12-1/2')
 
 
 

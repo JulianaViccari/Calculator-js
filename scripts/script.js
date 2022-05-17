@@ -94,7 +94,6 @@ function changeTheme() {
 }
 
 function calculate(input) {
-  console.log(input)
   let copyInput = input.split('')
   const operator = "-+*/";
   const mult= "*";
@@ -111,19 +110,19 @@ function calculate(input) {
       }
       
       if(copyInput.includes(division)){
-        let resultdivision = resultOperator(copyInput, division, divide, limits);
+        let resultdivision = doCalc(copyInput, division, divide, limits);
         copyInput.splice(limits.begin, limits.end+1, resultdivision);
   
       }else if(copyInput.includes(mult)){
-        let resultmult = resultOperator(copyInput, mult, multiply, limits);
+        let resultmult = doCalc(copyInput, mult, multiply, limits);
         copyInput.splice(limits.begin, limits.end+1, resultmult);
         
       }else if(copyInput.includes(deduct)){
-      let resultdeduct = resultOperator(copyInput, deduct, subtract, limits);
+      let resultdeduct = doCalc(copyInput, deduct, subtract, limits);
       copyInput.splice(limits.begin, limits.end+1, resultdeduct);
   
       }else if(copyInput.includes(sum)){
-        let resultsun = resultOperator(copyInput, sum, add, limits);
+        let resultsun = doCalc(copyInput, sum, add, limits);
         copyInput.splice(limits.begin, limits.end+1, resultsun);
   
       }
@@ -150,7 +149,7 @@ function isValidInput(copyInput, operator){
   }
 }
 
-function resultOperator(copyInput, compareOperador, mathOperationFunction, limits){
+function doCalc(copyInput, compareOperador, mathOperationFunction, limits){
   let total = 0
 
   let indexOperator = indexOfOperator(copyInput, compareOperador);

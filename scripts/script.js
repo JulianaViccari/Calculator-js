@@ -93,140 +93,174 @@ function changeTheme() {
   }
 }
 
-function calculate(input) {
-  let copyInput = input.split('')
-  const operator = "-+*/";
-  const mult= "*";
-  const sum = "+";
-  const deduct = "-"; 
-  const division = "/";
-  
-  try{
-    while(isValidInput(copyInput, operator) ){
-        
-      let limits = {
-        begin: 0,
-        end: 0
-      }
-      
-      if(copyInput.includes(division)){
-        let resultdivision = doCalc(copyInput, division, divide, limits);
-        copyInput.splice(limits.begin, limits.end+1, resultdivision);
-  
-      }else if(copyInput.includes(mult)){
-        let resultmult = doCalc(copyInput, mult, multiply, limits);
-        copyInput.splice(limits.begin, limits.end+1, resultmult);
-        
-      }else if(copyInput.includes(deduct)){
-      let resultdeduct = doCalc(copyInput, deduct, subtract, limits);
-      copyInput.splice(limits.begin, limits.end+1, resultdeduct);
-  
-      }else if(copyInput.includes(sum)){
-        let resultsun = doCalc(copyInput, sum, add, limits);
-        copyInput.splice(limits.begin, limits.end+1, resultsun);
-  
-      }
-    }
-  }catch(erro){
-    return erro.message
+class Token {
+  constructor(input){
+      this.input = input;
+      this.tokens = [];
   }
 
-  return copyInput
+  getTokensFromInput(){
+    let copyInput = this.input.split('');
+    let index = 0;
+    let number = "";
+    if (copyInput[0] === '-' || copyInput[0] === '+'){
+        number = copyInput[0];
+        index = 1;
+    }
+
+    while (index < copyInput.length){
+      if (!isNaN(copyInput[index])){
+          number += copyInput[index]
+          index++;
+      }else{
+          this.populateToken(number);
+          this.populateToken(copyInput[index]);
+          number = "";
+          if (copyInput[index+1] === '+' || copyInput[index+1] === "-"){
+              number = copyInput[index+1];
+              index +=2;
+          }else{
+              index++;
+          }
+      }
+    }
+    this.populateToken(number);
+    return this.tokens;
+  }
+
+  populateToken(stringValue){
+    if (stringValue !== ""){
+      if (!isNaN(stringValue)){
+          this.tokens.push(Number(stringValue));
+      }else{
+        if (this.tokens[this.tokens.length -1] === "*" || this.tokens[this.tokens.length -1] === "/" ){
+          throw new Error("Input inválido")
+        }else{
+          this.tokens.push(stringValue);
+        }
+      }
+    }
+  }
+
+  isValidInput(){
+    
+    let operator = "-+*/";
+    let filteredInput = this.tokens.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
+    
+    if(filteredInput.length === 0 ){
+        throw new Error("Input inválido")
+    }
+
+    for(let i = 0; i < this.tokens.length ; i++){
+        if(operator.includes(this.tokens[i])){
+            return true
+        }
+    }
+  }
 }
 
-//validação para input
-function isValidInput(copyInput, operator){
-  let filteredInput = copyInput.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
+class Calculator {
+  constructor(tokens){
+      this.tokens = tokens;
+  }
+
+  doCalculate(){
+    const mult= "*";
+    const sum = "+";
+    const deduct = "-"; 
+    const division = "/";
+    try{
+        
+      while(this.verifyTokens()){
+          
+        if(this.tokens.includes(division)){
+            let resultdivision = this.doCalc(division, this.divide);
+            resultdivision;
+
+        }else if(this.tokens.includes(mult)){
+            let resultmult = this.doCalc(mult, this.multiply);
+            resultmult
+            
+        }else if(this.tokens.includes(deduct)){
+            let resultdeduct = this.doCalc(deduct, this.subtract);
+            resultdeduct;
+
+        }else if(this.tokens.includes(sum)){
+            let resultsun = this.doCalc(sum, this.add);
+            resultsun;
+        }
+      }
+    }catch(erro){
+        return erro.message;
+    }
+    return this.tokens;
+  }
+
+  verifyTokens(){
+    let operators = "-+*/";
+    for (let i = 0; i < this.tokens.length; i++){
+        if(operators.includes(this.tokens[i])){
+            return true;
+        }
+    }
+    return false;
+  }
+
+  doCalc(mathOperador, mathOperationFunction){
+      let total = 0
+      let limits = {begin: 0 ,end: 0};
   
-  if(filteredInput.length === 0){
+      let indexOperator = this.indexOfOperator(mathOperador);
+      let numberBefore = this.tokens[indexOperator-1];
+      limits.begin = indexOperator-1;
+      let numberAfter = this.tokens[indexOperator+1];
+      limits.end = indexOperator+1;
+      total += mathOperationFunction(numberBefore, numberAfter );
+      return this.tokens.splice(limits.begin, limits.end+1, total);
+  }
+    
+  add(num1, num2){
+      return (num1 + num2);
+  }
+  
+  subtract(num1, num2){
+      return (num1 - num2);
+  }
+  
+  multiply(num1, num2){
+    
+      return (num1 * num2);
+  }
+  
+  divide(num1, num2){
+    if(num2 === 0){
+      throw new Error("Não é possivel divisão por 0")
+    }else{
+      return (num1 / num2);
+    }
+  }
+  
+  //encontra indice operador
+  indexOfOperator(operator){
+      return this.tokens.indexOf(operator)
+  }
+}
+
+function calculate(input) {
+  try {
+    const token = new Token(input);
+    const tokens = token.getTokensFromInput();
+
+  if (token.isValidInput(tokens)){
+    const test = new Calculator(tokens);
+    const result = test.doCalculate();
+    return result;
+  }else{
     throw new Error("Input inválido")
   }
-  
-   for(let i = 0; i < copyInput.length ; i++){
-    if(operator.includes(copyInput[i])){
-      return true
-    }
+  } catch (error) {
+    return error.message;
+    
   }
-}
-
-function doCalc(copyInput, compareOperador, mathOperationFunction, limits){
-  let total = 0
-
-  let indexOperator = indexOfOperator(copyInput, compareOperador);
-  let numberBefore = getNumberBefore(copyInput, indexOperator, limits);
-  let numberAfter = getNumberAfter(copyInput, indexOperator, limits);
-  total += mathOperationFunction(numberBefore, numberAfter );
-  return total;
-}
-
-const add = (num1, num2)=>{
-  return (num1 + num2);
-}
-
-const subtract = (num1, num2) => {
-  return (num1 - num2);
-}
-
-const multiply= (num1, num2)=>{
-  return (num1 * num2);
-}
-
-const divide = (num1, num2) =>{
-  if(num2 === 0){
-    throw new Error("Não é possivel divisão por 0")
-  }else{
-  return (num1 / num2);
-  }
-}
-
-//encontra indice operador
-function indexOfOperator(input, operator){
- return input.indexOf(operator)
-}
-
-//retorna em indice único numero antes o positionIndexOperator
-function getNumberBefore(copyInput, positionIndexOperator, limits){
-  let operatorMath = "-+*/"
-  let numero = [];
-  //if abaixo merece atenção
-  if(copyInput[positionIndexOperator - 1] === '*' || copyInput[positionIndexOperator - 1] === '/'){
-    throw new Error("Expressão mal formada")
-  }
-
-  for(let i = positionIndexOperator -1; i >= 0; i--){
-    if(operatorMath.includes(copyInput[i])){ 
-      if(i === 0 ){
-        numero.unshift(copyInput[i]);
-        limits.begin = i;
-      }else{
-        break;
-      }
-    }else{
-      numero.unshift(copyInput[i]);
-      limits.begin = i;
-    } 
-  }
-  return Number(numero.join(''))
-}
-
-//retorna em indice único números( e operadores ) após o positionIndexOperator
-function getNumberAfter(copyInput, positionIndexOperator, limits){
-  let operatorMath = "-+*/"
-  let numero = [];
-  
-  if(operatorMath.includes(copyInput[positionIndexOperator + 1])){//retira proximo operador positionIndexOperator do copyInput e armazena em numero
-    numero.push(copyInput[positionIndexOperator + 1 ])
-    copyInput.splice(positionIndexOperator + 1, 1)
-  }
-
-  for(let i = positionIndexOperator +1; i < copyInput.length ; i++){ 
-      if(operatorMath.includes(copyInput[i])){
-          break;
-      }else{
-          numero.push(copyInput[i]);
-          limits.end = i;
-      } 
-  }
-  return Number(numero.join(''));
 }
 

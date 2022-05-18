@@ -47,7 +47,7 @@ describe('Operation with wrong operators input', function(){
     .get('[value="="]').click()
     .get('#result')
 
-  cy.should('have.value','Expressão mal formada')
+  cy.should('have.value','Input inválido"')
   })
 
   it('Visit Calculator div and div operator ', function(){

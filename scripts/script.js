@@ -99,6 +99,35 @@ class Token {
       this.tokens = [];
   }
 
+  isValidInput(){
+    let operator = "-+*/";
+    let filteredInput = this.tokens.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
+    
+    if(filteredInput.length === 0 ){
+        throw new Error("Input inválido")
+    }
+
+    for(let i = 0; i < this.tokens.length ; i++){
+        if(operator.includes(this.tokens[i])){
+            return true
+        }
+    }
+  }
+
+  _populateToken(stringValue){
+    if (stringValue !== ""){
+      if (!isNaN(stringValue)){
+          this.tokens.push(Number(stringValue));
+      }else{
+        if (this.tokens[this.tokens.length -1] === "*" || this.tokens[this.tokens.length -1] === "/" ){
+          throw new Error("Input inválido")
+        }else{
+          this.tokens.push(stringValue);
+        }
+      }
+    }
+  } 
+
   getTokensFromInput(){
     let copyInput = this.input.split('');
     let index = 0;
@@ -113,8 +142,8 @@ class Token {
           number += copyInput[index]
           index++;
       }else{
-          this.populateToken(number);
-          this.populateToken(copyInput[index]);
+          this._populateToken(number);
+          this._populateToken(copyInput[index]);
           number = "";
           if (copyInput[index+1] === '+' || copyInput[index+1] === "-"){
               number = copyInput[index+1];
@@ -124,38 +153,13 @@ class Token {
           }
       }
     }
-    this.populateToken(number);
-    return this.tokens;
-  }
+    this._populateToken(number);
 
-  populateToken(stringValue){
-    if (stringValue !== ""){
-      if (!isNaN(stringValue)){
-          this.tokens.push(Number(stringValue));
-      }else{
-        if (this.tokens[this.tokens.length -1] === "*" || this.tokens[this.tokens.length -1] === "/" ){
-          throw new Error("Input inválido")
-        }else{
-          this.tokens.push(stringValue);
-        }
-      }
-    }
-  }
-
-  isValidInput(){
-    
-    let operator = "-+*/";
-    let filteredInput = this.tokens.filter((element) => !isNaN(element)); //cria novo array apenas com numeros do copyInput
-    
-    if(filteredInput.length === 0 ){
-        throw new Error("Input inválido")
-    }
-
-    for(let i = 0; i < this.tokens.length ; i++){
-        if(operator.includes(this.tokens[i])){
-            return true
-        }
-    }
+    if(this.isValidInput()){
+      return this.tokens
+    }else{
+      throw new Error("Input inválido")
+    };
   }
 }
 
@@ -248,19 +252,12 @@ class Calculator {
 
 function calculate(input) {
   try {
-    const token = new Token(input);
-    const tokens = token.getTokensFromInput();
-
-  if (token.isValidInput(tokens)){
-    const test = new Calculator(tokens);
-    const result = test.doCalculate();
+    const tokens = new Token(input).getTokensFromInput();
+    const result = new Calculator(tokens).doCalculate();
     return result;
-  }else{
-    throw new Error("Input inválido")
-  }
+  
   } catch (error) {
-    return error.message;
-    
+    return error.message; 
   }
 }
 
